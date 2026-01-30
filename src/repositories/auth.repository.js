@@ -20,3 +20,23 @@ export const createUser = async (data) => {
 
   return res.rows[0]
 }
+
+export const findUserById=async(id)=>{
+  const res=await pool.query(
+    `SELECT id,name,bio,username,email from users where id=$1`,
+    [id]
+  )
+  return res.rows[0]
+}
+
+export const updateUserBio = async (userId, bio) => {
+  const res = await pool.query(
+    `UPDATE users 
+     SET bio = $1 
+     WHERE id = $2 
+     RETURNING id, name, username, email, bio`,
+    [bio, userId]
+  )
+
+  return res.rows[0]
+}

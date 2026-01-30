@@ -1,25 +1,53 @@
-import { registerService, loginService } from "../services/auth.service.js"
-
+import {
+  registerService,
+  loginService,
+  getMeService,
+} from "../services/auth.service.js";
+import { updateBioService } from "../services/auth.service.js";
 export const register = async (req, res) => {
   try {
-    const user = await registerService(req.body)
-    res.json(user)
+    const user = await registerService(req.body);
+    res.json(user);
   } catch (err) {
-    res.status(400).json({ msg: err })
+    res.status(400).json({ msg: err });
   }
-}
+};
 
 export const login = async (req, res) => {
   try {
-    const { email, password } = req.body
-    const token = await loginService(email, password)
+    const { email, password } = req.body;
+    const token = await loginService(email, password);
 
-    res.json({ token })
+    res.json({ token });
   } catch (err) {
-    console.error("LOGIN ERROR:", err)
+    console.error("LOGIN ERROR:", err);
     res.status(400).json({
-      msg: err.message || err
-    })
+      msg: err.message || err,
+    });
   }
-}
+};
 
+export const getMe = async (req, res) => {
+  try {
+    const user = await getMeService(req.user.id);
+    res.json(user);
+  } catch (err) {
+    res.status(400).json({
+      msg: err.message,
+    });
+  }
+};
+
+export const updateBio = async (req, res) => {
+  try {
+    const { bio } = req.body;
+    const userId = req.user.id; // from JWT middleware
+
+    const user = await updateBioService(userId, bio);
+    res.json(user);
+  } catch (err) {
+    res.status(400).json({
+      msg: err.message || err,
+    });
+  }
+};
