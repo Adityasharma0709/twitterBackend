@@ -4,6 +4,7 @@ import authRoutes from "./routes/auth.routes.js"
 import userRoutes from "./routes/user.routes.js"
 import tweetRoutes from "./routes/tweet.routes.js"
 import mentionRoutes from "./routes/mention.routes.js"
+import { errorHandler } from "./middleware/error.middleware.js"
 import cors from "cors"
 dotenv.config()
 
@@ -15,6 +16,9 @@ app.use("/api/auth", authRoutes)
 app.use("/api/users", userRoutes)
 app.use("/api/tweets", tweetRoutes)
 app.use("/api/mentions", mentionRoutes)
-app.listen(5000,() => {
+
+app.use(errorHandler)
+
+app.listen(5000, () => {
   console.log("Server running on port 5000")
 })
