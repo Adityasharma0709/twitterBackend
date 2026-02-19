@@ -5,6 +5,7 @@ export const createTweet = async (req, res) => {
   try {
     const { content } = req.body   // ✅ DEFINE content here
     const userId = req.user.id
+console.log("User ID:", req.user.id)
 
     const tweet = await createTweetService(userId, content)
     res.json(tweet)                // ✅ return tweet

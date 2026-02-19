@@ -3,6 +3,7 @@ import {
   loginService,
   getMeService,
 } from "../services/auth.service.js";
+import * as bcrypt from 'bcrypt'
 import { updateBioService } from "../services/auth.service.js";
 export const register = async (req, res) => {
   try {
@@ -16,16 +17,26 @@ export const register = async (req, res) => {
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    const token = await loginService(email, password);
 
-    res.json({ token });
+    const { token, user } = await loginService(email, password);
+
+    res.json({
+      token,
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+      },
+    });
   } catch (err) {
     console.error("LOGIN ERROR:", err);
+
     res.status(400).json({
       msg: err.message || err,
     });
   }
 };
+
 
 export const getMe = async (req, res) => {
   try {

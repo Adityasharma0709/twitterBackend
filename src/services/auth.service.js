@@ -1,26 +1,29 @@
 import jwt from "jsonwebtoken"
 import { findUserByEmail, createUser, findUserById } from "../repositories/auth.repository.js"
 import { hashPassword, comparePassword } from "../utils/hash.js"
-
+import * as bcrypt from 'bcrypt'
 export const registerService = async (payload) => {
   payload.password = await hashPassword(payload.password)
   return await createUser(payload)
 }
 
 export const loginService = async (email, password) => {
+  const user = await findUserByEmail(email);
 
-  const user = await findUserByEmail(email)
-  if (!user) throw "User not found"
+  if (!user) throw new Error("User not found");
 
-  const valid = await comparePassword(password, user.password)
-  if (!valid) throw "Wrong password"
+  const valid = await bcrypt.compare(password, user.password);
+
+  if (!valid) throw new Error("Invalid credentials");
+
   const token = jwt.sign(
-    { id: user.id },
+    { userId: user.id },
     process.env.JWT_SECRET,
     { expiresIn: "7d" }
-  )
-  return token
-}
+  );
+
+  return { token, user };
+};
 
 export const getMeService=async (userId)=>{
   
